@@ -14,9 +14,9 @@
  * 将构造函数和析构函数设为protected，防止生成本类的对象
  */
 class noncopyable {
-public:
+protected:
 	noncopyable() {}
-	～noncopyable() {}
+	~noncopyable() {}
 private:
 	noncopyable(const noncopyable &);
 	noncopyable &operator=(const noncopyable &);
