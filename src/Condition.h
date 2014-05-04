@@ -19,7 +19,7 @@ public:
 	void notify();
 	void notify_all();
 private:
-	MutexLock *_lock; //使用引用和指针有区别吗？
+	MutexLock *_lock; //使用引用和指针有区别吗?没区别
 	pthread_cond_t _cond;
 };
 
