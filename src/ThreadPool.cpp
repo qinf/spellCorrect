@@ -21,15 +21,23 @@ void ThreadPool::start_thread_pool() {
 		iter->start();
 }
 void ThreadPool::stop_thread_pool() {
+	if (is_started == false)
+		return;
 	if (is_started == true)	{
+		is_started = false;
+		_cond.notify_all();
 		for(vector<WorkThread>::iterator iter = _thread_vector.begin(); iter != _thread_vector.end(); ++iter)
 			iter->join();
 	}
+	while (!_task_queue.empty()) {
+		_task_queue.pop();
+	}
 }
 bool ThreadPool::add_task_to_pool(Task task) {
-
+	_task_queue.push(task);
 }
 bool ThreadPool::get_task_from_pool(Task &task) {
+	task = _task_queue.front();
 	
 }
 bool ThreadPool::is_task_queue_empty() {
