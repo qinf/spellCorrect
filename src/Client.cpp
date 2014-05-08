@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	get_ip_and_port_from_conf(ip, port, conf_file);
 	cout << ip << endl << port << endl;
 
-	int client_fd;
+	int client_fd, addr_len;
 	struct sockaddr_in server_addr;
 	client_fd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (-1==client_fd)
@@ -31,9 +31,32 @@ int main(int argc, char* argv[])
 		close(client_fd);
 		throw std::runtime_error("failed to set socket option!");
 	}
-	int ibuf = 1024;
-	if (-1 == sendto(client_fd, &ibuf, sizeof(int), 0, (struct sockaddr *)&server_addr, sizeof(server_addr))) {
-		throw std::runtime_error("client send data failed!");
+	//从终端读入待纠错的单词
+	string inputword;
+	while(true) {
+		cin >> inputword;
+		//发送长度
+		int buf_len = inputword.size();
+		cout << "发送长度： " << buf_len << endl;
+		if(-1 == sendto(client_fd, &buf_len, sizeof(int), 0, (struct sockaddr *)&server_addr, sizeof(server_addr))) {
+			Log::get_instance()->write("client sent len failed");
+		}
+		//发送数据
+		char *send_buf = new char[inputword.size()+1];
+		memset(send_buf, 0, inputword.size()+1);
+		strcpy(send_buf, inputword.c_str());
+		sendn(client_fd, send_buf, buf_len, server_addr);
+
+		//接受数据
+		//1.接收长度
+		int recv_len;
+		int addr_len = sizeof(server_addr);
+		recvfrom(client_fd, &recv_len, sizeof(int), 0, (struct sockaddr*)&server_addr, (socklen_t*)&addr_len);
+		//2.接收内容
+		char *recv_buf = new char[recv_len+1];
+		memset(recv_buf, 0, recv_len+1);
+		recvn(client_fd, recv_buf, recv_len, server_addr, addr_len);
+		cout << recv_buf << endl;
 	}
 
 

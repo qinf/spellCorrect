@@ -9,6 +9,8 @@
 #define WORKTHREAD_H_
 
 #include "Thread.h"
+#include "EditDistance.h"
+#include "Log.h"
 
 class ThreadPool;
 

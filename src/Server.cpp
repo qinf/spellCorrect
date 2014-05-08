@@ -37,7 +37,12 @@ int main(int argc, char *argv[])
 	while (1) {
 		//recvfrom第一个参数必须为服务器自身的sockfd
 		recvfrom(server_fd, &len, sizeof(int), 0, (struct sockaddr*)&client_addr, (socklen_t*)&addr_len);
-		cout << len << endl;
+		//cout << len << endl;
+		//接受数据
+		char *recv_buf = new char[len + 1];
+		memset(recv_buf, '0', len + 1);
+		recvn(server_fd, recv_buf, len, client_addr, addr_len);
+		cout << "from server: " << recv_buf << endl;
 	}
 
 	return 0;

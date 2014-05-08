@@ -24,6 +24,13 @@ ifstream &open_file(ifstream &in, const string &file) {
 	return in;
 }
 
+ofstream &open_output_file(ofstream &out, const string &file) {
+	out.close();
+	out.clear();
+	out.open(file.c_str());
+	return out;
+}
+
 void get_ip_and_port_from_conf(ifstream &in, string &ip, int  &port){
 	string line;
 	getline(in, line);
@@ -73,22 +80,28 @@ int socket_client(const string &ip, int port) {
 }
 */
 
-int recvn(int recv_fd, char * recv_buf, int len) {
+//udp接收用recvfrom
+int recvn(int recv_fd, char * recv_buf, int len, struct sockaddr_in &src_addr, int &addrlen) {
 	int sum = 0;
 	int nrecv;
 	while(sum < len) {
-		nrecv = recv(recv_fd, &recv_buf[sum], len-sum, 0);
+		nrecv = recvfrom(recv_fd, &recv_buf[sum], len-sum, 0, (struct sockaddr*)&src_addr, (socklen_t *)&addrlen);
+		if(-1 == nrecv)
+			Log::get_instance()->write("recfrom failed!");
 		sum += nrecv;
 	}
 	recv_buf[sum] = '\0';
 	return sum;
 }
 
-int sendn(int send_fd, char* send_buf, int len) {
+//udp发送数据用sendto
+int sendn(int send_fd, char* send_buf, int len, struct sockaddr_in &addr) {
 	int sum = 0;
 	int nsend;
 	while(sum < len) {
-		nsend = send(send_fd, send_buf+sum, len-sum, 0);
+		nsend = sendto(send_fd, send_buf+sum, len-sum, 0, (struct sockaddr*)&addr, sizeof(addr));
+		if(-1 == nsend)
+			Log::get_instance()->write("sendto failed!");
 		sum += nsend;
 	}
 
