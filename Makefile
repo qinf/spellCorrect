@@ -1,7 +1,2 @@
-#./bin/main:
-#	g++ -o ./bin/main -g ./src/MutexLock.cpp ./src/Condition.cpp ./src/Thread.cpp ./src/WorkThread.cpp ./src/ThreadPool.cpp -lpthread
-
-./bin/server:
-	g++ -o ./bin/server ./src/Server.cpp ./src/server_client_func.cpp
-./bin/client:
-	g++ -o ./bin/client ./src/Client.cpp ./src/server_client_func.cpp
+./bin/main:
+	g++ -o ./bin/main ./src/main_test.cpp ./src/UDPServer.cpp ./src/Tools.cpp  ./src/Log.cpp ./src/Task.cpp ./src/dirct.cpp ./src/EditDistance.cpp ./src/ThreadPool.cpp ./src/server_client_func.cpp ./src/Condition.cpp ./src/WorkThread.cpp ./src/Thread.cpp -I./include -lpthread
