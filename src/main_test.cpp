@@ -8,6 +8,7 @@
 #include "ThreadPool.h"
 #include "UDPServer.h"
 #include "server_client_func.h"
+#include "WorkThread.h"
 using namespace std;
 
 int main(int argc, char *argv[])

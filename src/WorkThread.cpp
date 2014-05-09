@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "server_client_func.h"
+#include "UDPServer.h"
 
 void WorkThread::run() {
 	//process task
@@ -63,21 +64,16 @@ void WorkThread::process_task() {
 		int socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
 		if(-1 == socket_fd)
 			Log::get_instance()->write("send right word to client failed!");
-		//发送长度
-		int len = correct_word.size();
-		int i = sendto(socket_fd, &len, sizeof(int), 0, (struct sockaddr*)&addr, sizeof(addr));
-		//cout << "i =" << i << endl;
-		//cout << "correct_word len = " << len << endl;
 		//发送数据
-		char *send_buf = new char[correct_word.size()+1];
-		memset(send_buf, 0, correct_word.size()+1);
+		char *send_buf = new char[1024];
+		memset(send_buf, 0, 1024);
 		strcpy(send_buf, correct_word.c_str());
-		//cout << "edit correct word : "  << send_buf << endl;
-		int sum = sendn(socket_fd, send_buf, len, addr);
-		//cout << "sum = " << sum << endl;
+		if(-1 == sendto(socket_fd, send_buf, 1024, 0, (struct sockaddr*)&addr, sizeof(addr)))
+			Log::get_instance()->write("workThread send data to client failed!");
 		close(socket_fd);
 	}
 }
+
 void WorkThread::regist_thread_pool(ThreadPool *p_thread_pool) {
 	_p_thread_pool = p_thread_pool;
 }

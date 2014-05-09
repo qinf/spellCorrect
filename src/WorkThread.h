@@ -19,6 +19,7 @@ public:
 	void run(); //真正处理任务的函数
 	void process_task(); //去哪里找线程池
 	void regist_thread_pool(ThreadPool *p_thread_pool);
+	void get_udp_server_fd(int server_fd);
 private:
 	ThreadPool *_p_thread_pool;
 };

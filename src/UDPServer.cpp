@@ -64,27 +64,30 @@ int UDPServer::sendn(int send_fd, char* send_buf, int len, struct sockaddr_in &a
 
 //启动UDP服务器
 void UDPServer::start(ThreadPool &thread_pool) {
-	fd_set fd_write, fd_write_back;
-	struct timeval tm;
-	FD_ZERO(&fd_write);
+//	fd_set fd_read, fd_read_back;
+//	struct timeval tm;
+//	FD_ZERO(&fd_read);
 	//监听socket上的输入
-	FD_SET(server_fd, &fd_write);
-	tm.tv_sec = 10;
-	tm.tv_usec = 0;
+//	FD_SET(server_fd, &fd_read);
+//	tm.tv_sec = 3;
+//	tm.tv_usec = 0;
 	int addr_len = sizeof(client_addr);
+	char *recv_buf = new char[1024];
 	while(1) {
-		fd_write_back = fd_write;
-		select(1024, NULL, &fd_write_back, NULL, &tm);
-		if(FD_ISSET(server_fd, &fd_write_back)) {
-			int len;
-			//recvfrom第一个参数必须为服务器自身的sockfd
-			recvfrom(server_fd, &len, sizeof(int), 0, (struct sockaddr*)&client_addr, (socklen_t*)&addr_len);
+//		tm.tv_sec = 3;
+//		tm.tv_usec = 0;
+//		fd_read_back = fd_read;
+		std::cout << "recv。。。" << std::endl ;
+//		select(1024, &fd_read_back, NULL, NULL, &tm);
+//		if(FD_ISSET(server_fd, &fd_read_back)) {
 
 			//接受数据
-			char *recv_buf = new char[len + 1];
-			memset(recv_buf, '0', len + 1);
-			recvn(server_fd, recv_buf, len, client_addr, addr_len);
-			//cout << "server recv: " << recv_buf << endl;
+			memset(recv_buf, 0, 1024);
+			memset(&client_addr, 0, sizeof(client_addr));
+			cout << "================" << endl;
+			if (-1 == recvfrom(server_fd, recv_buf, 1024, 0, (struct sockaddr*)&client_addr, (socklen_t*)&addr_len))
+				Log::get_instance()->write("UDPServer recv data from client failed!");
+			cout << "server recv: " << recv_buf << endl;
 			Task task;
 			task.set_task(recv_buf);
 			task.set_addr(client_addr);
@@ -94,7 +97,12 @@ void UDPServer::start(ThreadPool &thread_pool) {
 			if(!thread_pool.add_task_to_pool(task)) {
 				Log::get_instance()->write("failed to add task to pool");
 			}
+			cout << "-----------------------------" << endl;
 			//cout << "queue size: " << thread_pool.get_task_queue_size() << endl;
-		}
+//		}
 	}
+}
+
+int UDPServer::get_server_fd() {
+	return server_fd;
 }

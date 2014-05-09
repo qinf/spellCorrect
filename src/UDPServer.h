@@ -33,6 +33,7 @@ public:
 	int recvn(int recv_fd, char* recv_buf, int len, struct sockaddr_in &src_addr, int &addrlen);
 	int sendn(int send_fd, char* send_buf, int len, struct sockaddr_in &addr);
 	void start(ThreadPool &p_thread_pool);
+	int get_server_fd();
 private:
 	int server_fd;
 	struct sockaddr_in server_addr, client_addr;

@@ -18,9 +18,9 @@ EditDistance::~EditDistance() {
 }
 int EditDistance::get_edit_distance(const string &a, const string &b) {
 	int memo[100][100];
-	for(int i = 0; i != a.size(); ++i)
+	for(int i = 0; i <= a.size(); ++i)
 		memo[i][0] = i;
-	for(int j = 0; j != b.size(); ++j)
+	for(int j = 0; j <= b.size(); ++j)
 		memo[0][j] = j;
 	
 	int i, j;
