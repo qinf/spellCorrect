@@ -24,8 +24,9 @@ void ThreadPool::start_thread_pool() {
 	_dirct = Dirct::get_instance();
 	string conf_file = "/home/qinf/workspace/spellCorrect/conf/spellCorrect.conf";
 	Tools *tools = new Tools(conf_file);
-	string word_map_file_path = tools->get_word_map_file_path();
-	_dirct->get_word_map(word_map_file_path);
+	//gbk_word_map
+	string gbk_word_map_file_path = tools->get_gbk_word_map_file_path();
+	_dirct->get_word_map(gbk_word_map_file_path);
 }
 
 void ThreadPool::stop_thread_pool() {

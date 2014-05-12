@@ -6,12 +6,14 @@
  ************************************************************************/
 
 #include "server_client_func.h"
+#include "EncodingConverter.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
 	string ip;
 	int port;
-	string conf_file = "../conf/spellCorrect.conf";
+	//相对路径出错，原因是相对路径是相对可执行程序而言的
+	string conf_file = "/home/qinf/workspace/spellCorrect/conf/spellCorrect.conf";
 	get_ip_and_port_from_conf(ip, port, conf_file);
 	cout << ip << endl << port << endl;
 
@@ -34,6 +36,7 @@ int main(int argc, char* argv[]) {
 	}
 	//从终端读入待纠错的单词
 	string inputword;
+	EncodingConverter trans;
 	while (true) {
 		/*
 		 * 这里必须放这三句话，不然的话，服务器只能接收一次
@@ -42,6 +45,7 @@ int main(int argc, char* argv[]) {
 		server_addr.sin_port = htons(port);
 		server_addr.sin_addr.s_addr = inet_addr(ip.c_str());
 		cin >> inputword;
+		inputword = trans.utf8_to_gbk(inputword);
 		//发送长度
 		int buf_len = inputword.size();
 //		cout << "发送长度： " << buf_len << endl;
@@ -52,10 +56,11 @@ int main(int argc, char* argv[]) {
 		char *send_buf = new char[1024];
 		memset(send_buf, 0, 1024);
 		strcpy(send_buf, inputword.c_str());
-		cout << "send_buf = " << send_buf << endl;
+		cout << inputword.size() << endl;
+		cout << "send_buf = " << trans.gbk_to_utf8(send_buf) << endl;
 		int i;
 		if (-1
-				== (i = sendto(client_fd, send_buf, 1024, 0,
+				== (i = sendto(client_fd, send_buf, strlen(send_buf), 0,
 						(struct sockaddr *) &server_addr, sizeof(server_addr)))) {
 			Log::get_instance()->write("client send data failed!");
 		}
@@ -74,7 +79,8 @@ int main(int argc, char* argv[]) {
 						(struct sockaddr*) &server_addr,
 						(socklen_t*) &addr_len))
 			Log::get_instance()->write("client recv failed!");
-		cout << recv_buf << endl;
+		string recv = trans.gbk_to_utf8(string(recv_buf));
+		cout << recv << endl;
 	}
 
 	return 0;

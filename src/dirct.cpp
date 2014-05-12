@@ -7,6 +7,7 @@
 
 #include "dirct.h"
 #include "MutexLock.cpp"
+#include "EncodingConverter.h"
 #include <cstdlib>
 using namespace std;
 
@@ -30,13 +31,17 @@ map<string, int> Dirct::get_word_map(const std::string &dirct_file) {
 	in.open(dirct_file.c_str());
 	string line, word;
 	int pos, count;
+	EncodingConverter trans;
 	while(getline(in, line)) {
-		pos = line.find(":");
+		pos = line.find("\t"); //gbk_word_map是以'\t'分开的
 		word = line.substr(0, pos);
 		count = atoi(line.substr(pos+1).c_str());
 		_word_map.insert(make_pair(word, count));
-//		cout << word << "\t" << count << endl;
+//		cout << trans.gbk_to_utf8(word) << "\t" << count << endl;
 	}
 	in.close();
+	return _word_map;
+}
+std::map<std::string, int> Dirct::get_map() {
 	return _word_map;
 }

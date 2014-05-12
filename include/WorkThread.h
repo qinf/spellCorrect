@@ -11,6 +11,7 @@
 #include "Thread.h"
 #include "EditDistance.h"
 #include "Log.h"
+#include "Cache.h"
 
 class ThreadPool;
 
@@ -22,6 +23,7 @@ public:
 	void get_udp_server_fd(int server_fd);
 private:
 	ThreadPool *_p_thread_pool;
+	Cache _cache; //每个工作线程里存在一个Cache，以提高检索效率
 };
 
 #endif /* WORKTHREAD_H_ */

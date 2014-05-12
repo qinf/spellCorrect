@@ -9,6 +9,8 @@
 #define EDITDISTANCE_H_
 
 #include <string>
+#include <stdint.h>
+#include <vector>
 
 class EditDistance {
 public:

@@ -18,6 +18,7 @@ public:
 	~Tools();
 	std::string get_word_map_file_path();
 	std::ifstream &open_file(std::ifstream &in, std::string &file);
+	std::string get_gbk_word_map_file_path();
 private:
 	std::string _conf_path;
 };

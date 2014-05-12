@@ -6,6 +6,7 @@
  ************************************************************************/
 
 #include "UDPServer.h"
+#include "EncodingConverter.h"
 
 UDPServer::UDPServer(const string &ip, const int &port) {
 	
@@ -73,6 +74,7 @@ void UDPServer::start(ThreadPool &thread_pool) {
 //	tm.tv_usec = 0;
 	int addr_len = sizeof(client_addr);
 	char *recv_buf = new char[1024];
+	EncodingConverter trans;
 	while(1) {
 //		tm.tv_sec = 3;
 //		tm.tv_usec = 0;
@@ -87,7 +89,8 @@ void UDPServer::start(ThreadPool &thread_pool) {
 			cout << "================" << endl;
 			if (-1 == recvfrom(server_fd, recv_buf, 1024, 0, (struct sockaddr*)&client_addr, (socklen_t*)&addr_len))
 				Log::get_instance()->write("UDPServer recv data from client failed!");
-			cout << "server recv: " << recv_buf << endl;
+			string recv = trans.gbk_to_utf8(string(recv_buf));
+			cout << "server recv: " << recv << endl;
 			Task task;
 			task.set_task(recv_buf);
 			task.set_addr(client_addr);

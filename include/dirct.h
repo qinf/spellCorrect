@@ -18,6 +18,7 @@ class Dirct {
 public:
 	static Dirct *get_instance();
 	std::map<std::string, int> get_word_map(const std::string &dirct_file);
+	std::map<std::string, int> get_map();
 private:
 	Dirct() {}
 	static Dirct *_p_instance;
