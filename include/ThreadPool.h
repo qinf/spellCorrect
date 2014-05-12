@@ -20,6 +20,8 @@
 #include <sys/types.h>
 #include <iostream>
 #include <queue>
+#include <unistd.h>
+#include <fstream>
 using namespace std;
 
 class ThreadPool: public noncopyable {
@@ -32,6 +34,7 @@ public:
 	bool get_task_from_pool(Task &task);
 	bool is_task_queue_empty();
 	Dirct *get_dirct();
+	static void *scan_thread_save_cache(void *arg); //扫描线程存储每个线程的cache
 	queue<Task>::size_type get_task_queue_size() const;
 private:
 	queue<Task> _task_queue; //任务队列
@@ -39,6 +42,7 @@ private:
 	vector<WorkThread> _thread_vector; //存储线程
 	bool is_started; //线程池是否开启
 	Dirct *_dirct; //词典指针
+	pthread_t _scan_thread;
 	MutexLock _lock;
 	Condition _cond;
 };

@@ -11,14 +11,16 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <string>
 
 class Tools{
 public:
-	Tools(std::string &conf_path);
+	Tools(const std::string &conf_path = "/home/qinf/workspace/spellCorrect/conf/spellCorrect.conf");
 	~Tools();
 	std::string get_word_map_file_path();
 	std::ifstream &open_file(std::ifstream &in, std::string &file);
 	std::string get_gbk_word_map_file_path();
+	std::string get_cache_file_path();
 private:
 	std::string _conf_path;
 };

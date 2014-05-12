@@ -59,6 +59,7 @@ void WorkThread::process_task() {
 				}
 			}
 			//将新查询放入缓存
+			//std::cout <<"______________________"<<__TIME__ << std::endl ;
 			_cache.add_to_hash_map(key, correct_word);
 			cout << "key :" << key << " value: "
 					<< _cache.get_hash_map_value(key) << endl;
@@ -84,6 +85,10 @@ void WorkThread::process_task() {
 					"workThread send data to client failed!");
 		close(socket_fd);
 	}
+}
+
+Cache WorkThread::get_cache() {
+	return _cache;
 }
 
 void WorkThread::regist_thread_pool(ThreadPool *p_thread_pool) {

@@ -9,6 +9,7 @@
 using namespace std;
 
 Cache::Cache() {
+
 }
 Cache::~Cache() {
 
@@ -28,9 +29,17 @@ std::string Cache::get_hash_map_value(std::string key) {
 
 void Cache::add_to_hash_map(std::string key, std::string value) {
 //	_word_hash_map.insert(std::make_pair<std::string, std::string>(key, value));
+	_mutex.lock();
 	_word_hash_map[key] = value;
-	cout << "add to unordered map" << endl;
-	cout << "key: " << key << " value: " << get_hash_map_value(key) << "size: " << _word_hash_map.size()<< endl;
+	_mutex.unlock();
+}
+
+std::unordered_map<std::string, std::string> Cache::get_map() {
+	return _word_hash_map;
+}
+
+Cache Cache::get_cache() {
+	return *this;
 }
 
 //void get_hash_map(std::unordered_map<std::string, std::string> hash_map) {

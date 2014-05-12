@@ -1,6 +1,0 @@
-ip=127.0.0.1
-port=8866
-data=/home/qinf/workspace/spellCorrect/data/big.txt
-log=/home/qinf/workspace/spellCorrect/log/spellCorrect.log
-word_map=/home/qinf/workspace/spellCorrect/data/word_map.txt
-gbk_word_map=/home/qinf/workspace/spellCorrect/data/gbk_word_map.txt

@@ -8,7 +8,7 @@
 #include "Tools.h"
 using namespace std;
 
-Tools::Tools(std::string &conf_path) :
+Tools::Tools(const std::string &conf_path) :
 		_conf_path(conf_path) {
 
 }
@@ -51,4 +51,19 @@ ifstream &Tools::open_file(ifstream &in, string &file) {
 	in.clear();
 	in.open(file.c_str());
 	return in;
+}
+std::string Tools::get_cache_file_path() {
+	ifstream instream;
+	string line;
+	string cache_file_path;
+	int pos;
+	open_file(instream, _conf_path);
+	getline(instream, line);
+	pos = line.find("cache=");
+	while (string::npos == pos) {
+		getline(instream, line);
+		pos = line.find("cache=");
+	}
+	cache_file_path = line.substr(pos + 6);
+	return cache_file_path;
 }

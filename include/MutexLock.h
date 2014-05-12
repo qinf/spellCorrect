@@ -11,7 +11,7 @@
 #include <pthread.h>
 #include "noncopyable.h"
 
-class MutexLock: public noncopyable {
+class MutexLock {
 public:
 	friend class Condition;
 	MutexLock();

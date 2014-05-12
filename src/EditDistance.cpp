@@ -79,6 +79,7 @@ int EditDistance::get_edit_distance(const string &a, const string &b) {
 		vector<uint16_t> w1, w2;
 		parse_gbk_string(a, w1);
 		parse_gbk_string(b, w2);
+		//std::cout << a << " : " << b << std::endl;
 		return edit_distance_uint_16(w1, w2);
 }
 
