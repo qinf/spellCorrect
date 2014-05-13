@@ -37,8 +37,15 @@ void WorkThread::process_task() {
 				"/home/qinf/workspace/spellCorrect/conf/spellCorrect.conf";
 		Tools tools(conf_file);
 		map_file = tools.get_word_map_file_path();
-		map<std::string, int> word_map = _p_thread_pool->get_dirct()->get_map(); //获取word_map
+		//使用索引不再使用原来的map
+//		map<std::string, int> word_map = _p_thread_pool->get_dirct()->get_map(); //获取word_map
 //				_p_thread_pool->get_dirct()->get_word_map(map_file); //这里是重新建立了map
+
+//获取索引的相关数据结构
+		std::vector<std::pair<std::string, int> > *p_word_vec =
+				_p_thread_pool->get_dirct()->get_word_vec();
+		std::unordered_map<std::uint16_t, std::set<int> > *p_index_map =
+				_p_thread_pool->get_dirct()->get_index_map();
 
 		std::string correct_word;
 		//查询Cache中是否存在
@@ -47,17 +54,43 @@ void WorkThread::process_task() {
 			correct_word = _cache.get_hash_map_value(key);
 			cout << "cache test --------" << endl;
 		} else {
-			map<std::string, int>::iterator iter = word_map.begin();
-			int min = 9999, count;
+			//修改查询逻辑，使用索引数据结构
 
-			for (; iter != word_map.end(); ++iter) {
-				//先找一个最小的即可
-				count = edit_dis.get_edit_distance(key, iter->first);
-				if (count < min) {
-					min = count;
-					correct_word = iter->first;
-				}
+//			map<std::string, int>::iterator iter = word_map.begin();
+//			int min = 9999, count;
+//
+//			for (; iter != word_map.end(); ++iter) {
+//				//先找一个最小的即可
+//				count = edit_dis.get_edit_distance(key, iter->first);
+//				if (count < min) {
+//					min = count;
+//					correct_word = iter->first;
+//				}
+//			}
+
+			uint16_t index_first; //查询词的首字母或者第一个汉字
+			if (key[0] >= 0x81 && key[0] <= 0xFE) { //是汉字，则取前两个字符
+				first = key[0] << 8 + key[1];
+			} else {
+				first = key[0];
 			}
+			std::unordered_map<std::uint16_t, std::set<int> >::iter index_iter = p_index_map->find(first);
+			if(index_iter != p_index_map->end()) {
+				set<int> word_set = index_iter->second;
+				int min = 9999, count; //min记录最小的编辑距离
+				for(set<int>::iterator it = word_set.begin(); it != word_set.end(); ++it) {
+					count = edit_dis.get_edit_distance(key, (*p_word_vec)[*it]);
+					if (count < min) {
+						min = count;
+						correct_word = (*p_word_vec)[*it];
+					}
+				}
+			} else {
+				//未检索到key，则原值返回
+				correct_word = key;
+			}
+
+
 			//将新查询放入缓存
 			//std::cout <<"______________________"<<__TIME__ << std::endl ;
 			_cache.add_to_hash_map(key, correct_word);

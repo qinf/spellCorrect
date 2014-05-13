@@ -21,9 +21,7 @@ ThreadPool::~ThreadPool() {
 
 void ThreadPool::start_thread_pool() {
 	is_started = true;
-	for (vector<WorkThread>::iterator iter = _thread_vector.begin();
-			iter != _thread_vector.end(); ++iter)
-		iter->start();
+
 	//建立词典
 	_dirct = Dirct::get_instance();
 	string conf_file =
@@ -31,7 +29,15 @@ void ThreadPool::start_thread_pool() {
 	Tools *tools = new Tools(conf_file);
 	//gbk_word_map
 	string gbk_word_map_file_path = tools->get_gbk_word_map_file_path();
-	_dirct->get_word_map(gbk_word_map_file_path);
+//	_dirct->get_word_map(gbk_word_map_file_path); //注释掉
+
+	//建立索引
+	_dirct->build_index(gbk_word_map_file_path);
+
+	//开启工作线程
+	for (vector<WorkThread>::iterator iter = _thread_vector.begin();
+				iter != _thread_vector.end(); ++iter)
+			iter->start();
 
 	//开启扫描线程
 	pthread_create(&_scan_thread, NULL, scan_thread_save_cache, this);
