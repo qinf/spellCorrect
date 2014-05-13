@@ -46,6 +46,8 @@ std::map<std::string, int> Dirct::get_map() {
 }
 
 void Dirct::build_index(const std::string &dirct_file) {
+
+	cout << "建立索引中..." << endl;
 	ifstream in;
 	in.close();
 	in.clear();
@@ -75,6 +77,8 @@ void Dirct::build_index(const std::string &dirct_file) {
 		index_set.insert(word_vec.size() - 1);
 		index_map[first] = index_set;
 	}
+
+	cout << "索引建立完毕" << endl;
 }
 
 std::vector<std::pair<std::string, int> >* Dirct::get_word_vec() {

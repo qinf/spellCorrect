@@ -68,21 +68,21 @@ void WorkThread::process_task() {
 //				}
 //			}
 
-			uint16_t index_first; //查询词的首字母或者第一个汉字
+			uint16_t first; //查询词的首字母或者第一个汉字
 			if (key[0] >= 0x81 && key[0] <= 0xFE) { //是汉字，则取前两个字符
 				first = key[0] << 8 + key[1];
 			} else {
 				first = key[0];
 			}
-			std::unordered_map<std::uint16_t, std::set<int> >::iter index_iter = p_index_map->find(first);
+			std::unordered_map<std::uint16_t, std::set<int> >::iterator index_iter = p_index_map->find(first);
 			if(index_iter != p_index_map->end()) {
 				set<int> word_set = index_iter->second;
 				int min = 9999, count; //min记录最小的编辑距离
 				for(set<int>::iterator it = word_set.begin(); it != word_set.end(); ++it) {
-					count = edit_dis.get_edit_distance(key, (*p_word_vec)[*it]);
+					count = edit_dis.get_edit_distance(key, (*p_word_vec)[*it].first);
 					if (count < min) {
 						min = count;
-						correct_word = (*p_word_vec)[*it];
+						correct_word = (*p_word_vec)[*it].first;
 					}
 				}
 			} else {

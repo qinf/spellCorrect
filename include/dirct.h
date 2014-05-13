@@ -25,14 +25,15 @@ public:
 	std::map<std::string, int> get_word_map(const std::string &dirct_file);
 	void build_index(const std::string &dirct_file); //建立索引
 	std::map<std::string, int> get_map();
+	std::vector<std::pair<std::string, int> > *get_word_vec();
+	std::unordered_map<std::uint16_t, std::set<int> > *get_index_map();
 private:
 	Dirct() {
 	}
 	static Dirct *_p_instance;
 	static MutexLock _lock;
 	std::map<std::string, int> _word_map;
-	std::vector<std::pair<std::string, int> > *get_word_vec();
-	std::unordered_map<std::uint16_t, std::set<int> > *get_index_map();
+
 	/*
 	 * 索引数据结构
 	 * word_vec，string型存储词或者英文单词，int类型存储频率
