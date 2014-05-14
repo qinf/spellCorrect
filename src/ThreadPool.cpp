@@ -7,6 +7,8 @@
 
 #include "ThreadPool.h"
 #include "Tools.h"
+#include "Log.h"
+#include "EncodingConverter.h"
 
 ThreadPool::ThreadPool(vector<WorkThread>::size_type max_thread) :
 		_task_queue(), _max_thread(max_thread), _thread_vector(_max_thread), is_started(
@@ -45,7 +47,7 @@ void ThreadPool::start_thread_pool() {
 
 void *ThreadPool::scan_thread_save_cache(void *arg) {
 	ThreadPool* p_thread_pool = static_cast<ThreadPool*>(arg);
-	vector<WorkThread> work_threads = p_thread_pool->_thread_vector;
+	vector<WorkThread> &work_threads = p_thread_pool->_thread_vector;//这里必须加引用
 	//遍历工作线程vector，将每个vector中的cache存储到系统cache文件中
 	//1.读配置文件，获取cache文件位置，然后
 	Tools tools;
@@ -59,14 +61,15 @@ void *ThreadPool::scan_thread_save_cache(void *arg) {
 				iter != work_threads.end(); ++iter) {
 			//将workthread中的cache写入到cache文件中
 			//std::unordered_map<std::string, std::string> word_hash_map = iter->get_cache().get_map();
-			Cache cache = iter->get_cache();
-			ifstream infile(cache_file);
+			Cache& cache = iter->get_cache();
+//			cout << "ThreadPool cache size: " << cache.get_word_hash_map_size() << endl;
+			ifstream infile(cache_file.c_str());
 			string line;
 			getline(infile, line);
 			int pos;
 			while(string::npos != (pos = line.find("\t"))) {
 				string key = line.substr(0, pos);
-				string value = line.substr(pos);
+				string value = line.substr(pos+1);//要加1，不然会读入tab键
 				if(!cache.is_key_in_map(key)) {
 					cache.add_to_hash_map(key, value);
 				}
@@ -75,13 +78,21 @@ void *ThreadPool::scan_thread_save_cache(void *arg) {
 			infile.close();
 
 			//将线程中的cache写入系统cache文件
-			ofstream  outfile(cache_file);
-			std::unordered_map<std::string, std::string> word_hash_map = iter->get_cache().get_map();
+			ofstream  outfile(cache_file.c_str());
+			if (!outfile) {
+				Log::get_instance()->write("failed to open cace file");
+			}
+			std::unordered_map<std::string, std::string> word_hash_map = cache.get_map();
 			std::unordered_map<std::string, std::string>::iterator iter1 = word_hash_map.begin();
+
+			EncodingConverter trans;
+
 			for(; iter1 != word_hash_map.end(); ++iter1) {
 				outfile << iter1->first << "\t" << iter1->second << endl;
+//				cout << "---===: " << trans.gbk_to_utf8(iter1->first) << " : " << trans.gbk_to_utf8(iter1->second) << endl;
 			}
 			outfile.close();
+			sleep(1);
 		}
 	}
 	return NULL;

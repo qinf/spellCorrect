@@ -58,7 +58,7 @@ void Dirct::build_index(const std::string &dirct_file) {
 	set<int> index_set; //存储vector中的下标
 	index_set.clear();
 	while (getline(in, line)) {
-		pos = line.find("\t");
+		pos = line.find("\t");//字符流
 		word = line.substr(0, pos);
 		count = atoi(line.substr(pos + 1).c_str());
 		uint16_t first;
@@ -70,12 +70,9 @@ void Dirct::build_index(const std::string &dirct_file) {
 		//处理word_vec,添加word和词频。
 		word_vec.push_back(make_pair(word, count));
 		//处理index_map,添加索引和下标集合
-		if (0 == index_map.count(first)) {
-			index_set.clear();
-//			index_map.insert(make_pair<uint16_t, set<int> >(first, index_map.at(first).insert(word_vec.size()-1)));
-		}
-		index_set.insert(word_vec.size() - 1);
-		index_map[first] = index_set;
+//		index_set.insert(word_vec.size() - 1);
+//		index_map[first] = index_set;//index_map[first].
+		index_map[first].insert(word_vec.size() - 1);
 	}
 
 	cout << "索引建立完毕" << endl;

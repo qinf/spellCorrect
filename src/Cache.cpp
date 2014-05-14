@@ -15,7 +15,6 @@ Cache::~Cache() {
 
 }
 bool Cache::is_key_in_map(std::string &key) {
-	cout << "size: " << _word_hash_map.size() << endl;
 	if(_word_hash_map.count(key) == 0) {
 		return false;
 	} else {
@@ -34,12 +33,13 @@ void Cache::add_to_hash_map(std::string key, std::string value) {
 	_mutex.unlock();
 }
 
-std::unordered_map<std::string, std::string> Cache::get_map() {
+std::unordered_map<std::string, std::string>& Cache::get_map() {
 	return _word_hash_map;
 }
 
-Cache Cache::get_cache() {
-	return *this;
+int Cache::get_word_hash_map_size() {
+	//cout << "hash map size ======= " << _word_hash_map.size() << endl;
+	return _word_hash_map.size();
 }
 
 //void get_hash_map(std::unordered_map<std::string, std::string> hash_map) {

@@ -23,8 +23,8 @@ public:
 	std::string get_hash_map_value(std::string key);
 //	void get_hash_map(std::unordered_map<std::string, std::string> hash_map);
 	void add_to_hash_map(std::string key, std::string value);
-	std::unordered_map<std::string, std::string> get_map();
-	Cache get_cache();
+	std::unordered_map<std::string, std::string>& get_map();
+	int get_word_hash_map_size();
 private:
 	std::unordered_map<std::string, std::string> _word_hash_map;//可以改进
 	MutexLock _mutex; //锁不能复制

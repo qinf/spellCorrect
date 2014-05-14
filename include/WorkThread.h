@@ -21,7 +21,7 @@ public:
 	void process_task(); //去哪里找线程池
 	void regist_thread_pool(ThreadPool *p_thread_pool);
 	void get_udp_server_fd(int server_fd);
-	Cache get_cache();
+	Cache& get_cache();
 private:
 	ThreadPool *_p_thread_pool;
 	Cache _cache; //每个工作线程里存在一个Cache，以提高检索效率

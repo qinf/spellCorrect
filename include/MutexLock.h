@@ -9,7 +9,7 @@
 #define MUTEXLOCK_H_
 
 #include <pthread.h>
-#include "noncopyable.h"
+//#include "noncopyable.h"
 
 class MutexLock {
 public:

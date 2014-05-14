@@ -14,6 +14,7 @@
 #include "server_client_func.h"
 #include "UDPServer.h"
 #include "EncodingConverter.h"
+#include <iostream>
 
 void WorkThread::run() {
 	//process task
@@ -51,8 +52,8 @@ void WorkThread::process_task() {
 		//查询Cache中是否存在
 		string key = task.get_task();
 		if (_cache.is_key_in_map(key)) {
+//			std::cout << "cached !" << std::endl ;
 			correct_word = _cache.get_hash_map_value(key);
-			cout << "cache test --------" << endl;
 		} else {
 			//修改查询逻辑，使用索引数据结构
 
@@ -90,12 +91,11 @@ void WorkThread::process_task() {
 				correct_word = key;
 			}
 
-
 			//将新查询放入缓存
 			//std::cout <<"______________________"<<__TIME__ << std::endl ;
 			_cache.add_to_hash_map(key, correct_word);
 			cout << "key :" << key << " value: "
-					<< _cache.get_hash_map_value(key) << endl;
+					<< _cache.get_hash_map_value(key) << "size: " << _cache.get_word_hash_map_size() << endl;
 		}
 
 		//向客户端发送正确的单词
@@ -120,7 +120,8 @@ void WorkThread::process_task() {
 	}
 }
 
-Cache WorkThread::get_cache() {
+Cache& WorkThread::get_cache() {
+	std::cout << "workthread cache size: " << _cache.get_word_hash_map_size() << std::endl;
 	return _cache;
 }
 
